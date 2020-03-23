@@ -24,13 +24,25 @@ function sentence_placeholder(){
   for (symb of main_sentence.split('')) {
     // 
     let inner_div = document.createElement('div');
-    if (alphabet.includes(symb)) {
-      inner_div.textContent = "100";
-    } else {
-      inner_div.textContent = symb;
-    }
     inner_div.setAttribute('class', 'grid-item');
-    newgrid.appendChild(inner_div);    
+
+    let up = document.createElement('div');
+    up.setAttribute('class', 'grid-div');
+    let down = document.createElement('div');
+    down.setAttribute('class', 'grid-div');
+
+    if (alphabet.includes(symb)) {
+      up.textContent = "100";
+    } else {
+      up.textContent = symb;
+    }
+
+    down.textContent = "dd";
+
+
+    inner_div.appendChild(up);
+    inner_div.appendChild(down);
+    newgrid.appendChild(inner_div);
   }
 }
 
