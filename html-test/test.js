@@ -1,8 +1,12 @@
-var gav = "";
-var AA = 1;
-var BB = 20;
+var AA = 10;
+var BB = 21;
 var main_sentence = ""
+var encode_dict;
+var task_dict;
 
+var input_id = "input_sentence";
+var task_id = "sentence";
+var encode_id = "lettercodes";
 
 var reA = /[^АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ]/g;
 // /^[аАбБвВгГдДеЕёЁжЖзЗиИйЙкКлЛмМнНоОпПрРсСтТуУфФхХцЦчЧшШщЩъЪыЫьЬэЭюЮяЯ]+$/
@@ -11,46 +15,32 @@ var reA = /[^АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ]
 var alphabet = ['А','Б','В','Г','Д','Е','Ё','Ж','З','И','Й','К','Л','М','Н','О','П','Р','С','Т','У','Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э','Ю','Я'];
 
 
-function sentence_placeholder(){
-  // sentence stuuf:
-  var newgrid = document.createElement("div");
-  newgrid.innerHTML = "";
-  newgrid.setAttribute('class', 'grid-container');
-  newgrid.setAttribute('id', 'newgrid');
-  document.body.appendChild(newgrid)
+// // that's how you create a new element
+// var mygrid = document.createElement("div");
+// mygrid.innerHTML = "";
+// mygrid.setAttribute('class', 'grid-container');
+// mygrid.setAttribute('id', 'sentgrid');
+// document.body.appendChild(mygrid);
 
-  // operate on a global variable - whatever
-  // how can one pass JS function returns around
-  for (symb of main_sentence.split('')) {
-    // 
-    let inner_div = document.createElement('div');
-    inner_div.setAttribute('class', 'grid-item');
-
-    let up = document.createElement('div');
-    up.setAttribute('class', 'grid-div');
-    let down = document.createElement('div');
-    down.setAttribute('class', 'grid-div');
-
-    if (alphabet.includes(symb)) {
-      up.textContent = "100";
-    } else {
-      up.textContent = symb;
-    }
-
-    down.textContent = "dd";
-
-
-    inner_div.appendChild(up);
-    inner_div.appendChild(down);
-    newgrid.appendChild(inner_div);
-  }
+function arb_random(a,b) {
+  // will generate random var between
+  // a,b including boundaries:
+  uni_rand_01 = Math.random();
+  //  make sure b>a, a and b are integers...
+  a -= 1;
+  uni_rand_ab = (b-a)*uni_rand_01 + a;
+  // integer version
+  return Math.ceil(uni_rand_ab);
 }
 
 
-function myFunction(idd) {
+function encodeSentence() {
   var sentence, s_arr;
+  // empty the dicts:
+  encode_dict = {};
+  task_dict = {};
   // Get the sentence ...
-  sentence = document.getElementById(idd).value;
+  sentence = document.getElementById(input_id).value;
   // sanitize input a bit -> unfirom, cyrillic, etc:
   sentence = sentence.trim().toUpperCase();
   main_sentence = sentence;
@@ -59,14 +49,7 @@ function myFunction(idd) {
   // alert(sentence);
   s_arr = sentence.split('');
   su_arr = [...new Set(s_arr)];
-  document.getElementById("demo").innerHTML = su_arr;
-
-  // let's try to add stuff dynamically ...
-  var mygrid = document.createElement("div");
-  mygrid.innerHTML = "";
-  mygrid.setAttribute('class', 'grid-container');
-  mygrid.setAttribute('id', 'sentgrid');
-  document.body.appendChild(mygrid)
+  // document.getElementById("demo").innerHTML = su_arr;
 
   // now we'd need to generate a "task" for each
   // element of su_arr, and make sure that
@@ -91,75 +74,83 @@ function myFunction(idd) {
     //  turn rand[0,1] -> rand[a,b] ...
     console.log(attempt_counter+" attempts: "+m1+"*"+m2+" = "+(m1*m2));
     codes[i] = m1*m2;
+    task_dict[su_arr[i]] = m1+"*\<br \/\>"+m2+"\= \?";
+    encode_dict[su_arr[i]] = m1*m2;
+  }
 
+  console.log(task_dict);
+  console.log(encode_dict);
+
+  // clean the div if needed
+  var mygrid = document.getElementById(encode_id);
+  if (mygrid.hasChildNodes()) {
+      mygrid.innerHTML = '';
+  }
+
+  for (var symbol of su_arr.sort()) {
+    // iterate over enocding 
     var inner_div = document.createElement('div');
-    inner_div.textContent = m1+"*"+m2+" = "+(m1*m2);
     inner_div.setAttribute('class', 'grid-item');
+    // 
+    let up = document.createElement('div');
+    up.setAttribute('class', 'grid-div');
+    let down = document.createElement('div');
+    down.setAttribute('class', 'grid-div');
+
+    console.log(symbol);
+    console.log(encode_dict[symbol]);
+    console.log(task_dict[symbol]);
+
+    up.innerHTML = task_dict[symbol];
+    down.textContent = symbol;
+
+
+    inner_div.appendChild(up);
+    inner_div.appendChild(down);
     mygrid.appendChild(inner_div);
 
   }
-  console.log(su_arr);
-  console.log(codes);
+
+  // clear the form on completion
+  document.getElementById(input_id).value = "";
 
 }
 
 
+function generateTask(){
+  // sentence stuuf:
+  // https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
+  var newgrid = document.getElementById(task_id);
+  if (newgrid.hasChildNodes()) {
+      newgrid.innerHTML = '';
+  }
 
-function arb_random(a,b) {
-  // will generate random var between
-  // a,b including boundaries:
-  uni_rand_01 = Math.random();
-  //  make sure b>a, a and b are integers...
-  a -= 1;
-  uni_rand_ab = (b-a)*uni_rand_01 + a;
-  // integer version
-  return Math.ceil(uni_rand_ab);
+  // operate on a global variable - whatever
+  // how can one pass JS function returns around
+  for (symb of main_sentence.split('')) {
+    // 
+    let inner_div = document.createElement('div');
+    inner_div.setAttribute('class', 'grid-item');
+
+    let up = document.createElement('div');
+    up.setAttribute('class', 'grid-div');
+    let down = document.createElement('div');
+    down.setAttribute('class', 'grid-div');
+
+    if (alphabet.includes(symb)) {
+      down.textContent = encode_dict[symb];
+      // up.innerHTML = "<input >";
+      up.textContent = "?";
+    } else {
+      up.textContent = symb;
+    }
+
+    inner_div.appendChild(up);
+    inner_div.appendChild(down);
+    newgrid.appendChild(inner_div);
+
+  }
 }
 
 // STR SPLITTING
 // STRING.split(/\s/);
-
-
-//////////////////////////////////////////////////////
-// THIS IS HOW TO CHECK IF ELEMENT IS IN THE LIST ...
-//////////////////////////////////////////////////////
-// let mylist = [1, 2, 3, "foo", "bar"]
-// if (mylist.includes(3)) {
-//     writeln('yes, includes returns true')
-// }
-// // indexOf returns the location of item or -1 if not found
-// if (mylist.indexOf(3) > -1) {
-//     writeln('yes, index is > -1')
-// }
-//////////////////////////////////////////////////////
-// THIS IS HOW TO CHECK IF ELEMENT IS IN THE LIST ...
-//////////////////////////////////////////////////////
-
-
-
-
-// function myFunction() {
-//   var x, text;
-//   // Get the value of the input field with id="numb"
-//   x = document.getElementById("numb").value;
-//   // If x is Not a Number or less than one or greater than 10
-//   if (isNaN(x) || x < 1 || x > 9) {
-//     text = x + " - ввод был ну очень плохой";
-//   } else {
-//     text = x + " - хорошая вводка!!!";
-//   }
-//   document.getElementById("demo").innerHTML = text;
-//   document.getElementById("numb").value = '';
-// }
-
-
-function blah(idd) {
-  gav += "А";
-  document.getElementById(idd).innerHTML=gav;
-}
-
-
-function clean(idd) {
-  gav = "";
-  document.getElementById(idd).innerHTML='';
-}
