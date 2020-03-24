@@ -68,7 +68,7 @@ function encodeSentence() {
     let letter = su_arr[i];
     let operation = choose(ops_todo);
     let [a,b,res] = encode_letter(letter, operation, codes);
-    let opstr = op_to_string(operation,html=true);
+    let opstr = op_to_string(operation,html=false);
     // upack and record everything:
     codes[i] = res;
     task_dict[letter] = a+opstr+b+"= \?";

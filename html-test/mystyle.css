@@ -27,3 +27,15 @@ div.grid-div {
   font-size: 20px;
   text-align: center;
 }
+
+
+footer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #45a1ff;
+    color: #fff;
+}
