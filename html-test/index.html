@@ -6,18 +6,22 @@
 <body>
 
 <h1>Страничка ля-ля</h1>
-<p>Напиши-ка предложеньице ...</p>
-
-<input id="input_sentence">
-<button type="button" onclick="encodeSentence()">
-Кодировочка!
-</button>
+<p>Выбери операции:
+	(+<input type="checkbox" id="plus">)
+	(-<input type="checkbox" id="minus">)
+	(*<input type="checkbox" id="multiply">)
+</p>
+<p>Напиши-ка предложеньице:
+	<input id="input_sentence">
+	<button type="button" onclick="encodeSentence()">
+	Кодировочка!
+	</button>
+</p>
 <br />
+<div id="lettercodes" class="grid-container"></div>
 <button type="button" onclick="generateTask()">
 Заданьице!
 </button>
-
-<div id="lettercodes" class="grid-container"></div>
 <br />
 <div id="sentence" class="grid-container"></div>
 
